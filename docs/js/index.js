@@ -28,7 +28,7 @@ const makePagination = (lastPage, onSides = 1) => {
 let roms = await getCatalogue();
 if (localStorage.getItem('noninitial')) {
     localStorage.setItem('noninitial', true)
-    location.replace('/upload');
+    location.replace('./upload');
 };
 const makeTagItem = ($html, [tag, count]) =>
     `${$html}<li><a href="?${new URLSearchParams({ order, search, tag })}">${systems[tag] || tag} (${count})</a></li>`;

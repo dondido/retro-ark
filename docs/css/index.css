@@ -172,7 +172,7 @@ main {
     }
 }
 .back,
-[href="/upload"],
+[href="./upload"],
 .tags button {
     display: flex;
     cursor: pointer;
@@ -182,7 +182,7 @@ main {
     font-size: 16px;
 }
 .back,
-[href="/upload"] {
+[href="./upload"] {
     display: inline-flex;
     border-radius: 8px;
     padding-inline: 14px;
