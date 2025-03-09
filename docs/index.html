@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EmulatorJS</title>
+        <link rel = "icon" href = docs/favicon.ico sizes = "16x16 32x32 48x48 64x64" type = image/vnd.microsoft.icon>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="./css/index.css?v=1.0">
+    </head>
+    <body>
+        <main>
+            <div class="menu">
+                <a href="/upload">Import Games</a>
+                <details>
+                    <summary class="settings">Settings</summary>
+                    <div class="panel">
+                        <label><input type="checkbox" id="$delete"> Delete mode</label>
+                        <label><input type="checkbox" id="$autoplay"> Disable video thumb autoplay</label>
+                    </div>
+                </details>
+            </div>
+            <div class="filters">
+                <form name="$search"><input type="search"/></form>
+                <div class="select-container">
+                    <select id="$order">
+                        <option value="releasedate">Release</option>
+                        <option value="name">Name</option>
+                        <option value="rating">Rating</option>
+                        <option value="recent">Recent</option>
+                    </select>
+                </div> 
+            </div>
+            <ul id="$tags" class="tags"></ul>
+            <ul id="$gallery" class="gallery"></ul>
+            <div class="no-games">
+                <p>No games available.</p>
+                <a href="/upload">Import Games</a>
+            </div>
+            <div class="no-games-in-category">
+                <p>No games available in this category.</p>
+            </div>
+            <nav class="nav-pagination" aria-label="Pagination">
+                <ul id="$pagination" class="pagination"></ul>
+            </nav>
+        </main>
+        <script type="module" src="./js/index.js"></script>
+    </body>
+</html>
