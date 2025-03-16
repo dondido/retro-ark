@@ -28,8 +28,23 @@
                 <h2>Supported Systems</h2>
                 <hr>
                 <h3>Nintendo</h3>
-                <p>Famicom / NES   |   SNES</p>
+                <p>Famicom / NES   |   SNES   |   GBA   |   GBC</p>
+                <h3>Sega</h3>
+                <p>Mega Drive</p>
             </section>
+            <dialog id="dialog">
+                <button id="$closedialog" class="dialog__button--close"></button>
+                <p class="helper">Please help us identify the console for the ROM "<b id="$helper"></b>":</p>
+                <form name="classifier" method="dialog">
+                    <label><input type="radio" name="platform" value="arcade"/>MAME</label>
+                    <label><input type="radio" name="platform" value="segaMD"/>Sega Mega Drive</label>
+                    <label><input type="radio" name="platform" value="nes"/>NES</label>
+                    <label><input type="radio" name="platform" value="snes"/>SNES</label>
+                    <label><input type="radio" name="platform" value="gba"/>GBA/GBC</label>
+                    <label class="classifier__auto-apply"><input type="checkbox" name="autoapply" checked> Apply to all selected files</label>
+                    <button class="classifier__submit">Submit</button>
+                </form>
+            </dialog>
         </div>
         <script type="module" src="./js/upload.js"></script>
     </body>
