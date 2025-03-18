@@ -72,7 +72,7 @@ const orderBy = {
 };
 const makeGameEntry = (list, { path, id, title, platform, rating = 0 }) => list + `
     <li>
-        <a href="/game?id=${id}" class="${favourites.includes(id) ? 'favourite' : ''}">
+        <a href="./game?id=${id}" class="${favourites.includes(id) ? 'favourite' : ''}">
             <video ${$autoplay.checked ? '' : 'autoplay'} loop muted poster="./images/${platform}/${path}-image.png" src="./videos/${platform}/${path}.webm">
             </video>
             <div class="thumb-footer">
