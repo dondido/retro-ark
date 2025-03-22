@@ -145,7 +145,8 @@ const init = () => {
     $autoplay.checked && $gallery.addEventListener('pointermove', move);
     $pagination.innerHTML = makePagination(lastPage);
     $tags.querySelector('[href$=favourites]').textContent = `Favourites (${favourites.length})`;
-}
+};
+navigator.serviceWorker.register('../sw.js');
 addEventListener('resize', collapseTags)
 $order.onchange = ({ target }) => {
     location.href = `?${new URLSearchParams({ tag, order: target.value})}`;
