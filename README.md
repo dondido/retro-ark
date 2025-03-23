@@ -1,6 +1,6 @@
 # Retro Ark
 
-RetroArk is a user-friendly frontend for the RetroArch, designed for speed and ease of use.
+RetroArk is a user-friendly frontend for RetroArch, designed for speed and ease of use.
 
 ## Auto Scraper
 
