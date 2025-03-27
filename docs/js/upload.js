@@ -90,8 +90,6 @@ const findBestNameMatch = (mainString, targetStrings) => {
 };
 const supportedSystems = Object.keys(systems);
 loadScript('data/src/compression.js');
-window.titles = titles;
-window.findBestMatch = findBestMatch;
 const matchPlatform = (ext) => {
     if (['fds', 'nes', 'unif', 'unf'].includes(ext)) {
         return 'nes';
@@ -99,13 +97,17 @@ const matchPlatform = (ext) => {
     if (['smc', 'fig', 'sfc', 'gd3', 'gd7', 'dx2', 'bsx', 'swc'].includes(ext)) {
         return 'snes';
     }
-    if(['md', 'bin'].includes(ext)) {
+    if(['md', 'gen'].includes(ext)) {
         return 'segaMD';
     }
+    if (['gba'].includes(ext)) {
+        return ext
+    }  
 }
 picker.addEventListener('change', async e => {
     const roms = Array.from(e.target.files);
     let completedCount = 0;
+    let autoApplyPlatform;
     const step = () => {
         if (completedCount < roms.length) {
             $progress.textContent = `Importing ${completedCount} of ${roms.length}.`;
@@ -117,18 +119,28 @@ picker.addEventListener('change', async e => {
     requestAnimationFrame(step);
     for (const rom of roms) {
         const parts = rom.name.split('.');
-        let ext = parts.pop();
+        const ext = parts.pop();
+        const name = parts.join('.');
         let platform = matchPlatform(ext);
         let fileArrayBuffer;
-        console.log(1111, platform)
         if (platform === undefined && ['7z', 'zip', 'rar'].includes(ext)) {
             platform = matchPlatform(await new Promise(async resolve => {
-                //await loadScript('data/src/compression.js');
                 const Compression = new EJS_COMPRESSION();
                 const cb = filename => resolve(filename.split('.').at(-1));
                 fileArrayBuffer = await readFile(rom);
                 Compression.decompress(new Uint8Array(fileArrayBuffer), () => {}, cb) 
             }));
+        }
+        platform ||= autoApplyPlatform;
+        if (platform === undefined) {
+            $helper.textContent = name;
+            dialog.showModal();
+            platform = await new Promise((resolve) => {
+                dialog.onclose = () => resolve($classifier.elements.platform[dialog.returnValue]);
+            });
+            if ($classifier.elements.autoapply.checked) {
+                autoApplyPlatform = platform;
+            }  
         }
         completedCount ++;
         if (supportedSystems.includes(platform)) {
@@ -145,7 +157,7 @@ picker.addEventListener('change', async e => {
             const entry = bestMatchIndex === undefined ? { platform } : catalogues[platform][bestMatchIndex];
             const buffer = fileArrayBuffer || await readFile(rom);
             entry.id ||= `${title.replace(/\s/g, '')}.${platform}`;
-            entry.title = title;
+            entry.title = name;
             if ($tag.value) {
                 entry.tag = $tag.value;
             }

@@ -35,16 +35,16 @@
                 <p>MAME</p>
             </section>
             <dialog id="dialog">
-                <button id="$closedialog" class="dialog__button--close"></button>
                 <p class="helper">Please help us identify the console for the ROM "<b id="$helper"></b>":</p>
-                <form name="classifier" method="dialog">
+                <form id="$classifier" method="dialog">
+                    <button class="dialog__button--close" aria-label="close"></button>
                     <label><input type="radio" name="platform" value="arcade"/>MAME</label>
                     <label><input type="radio" name="platform" value="segaMD"/>Sega Mega Drive</label>
                     <label><input type="radio" name="platform" value="nes"/>NES</label>
                     <label><input type="radio" name="platform" value="snes"/>SNES</label>
                     <label><input type="radio" name="platform" value="gba"/>GBA/GBC</label>
                     <label class="classifier__auto-apply"><input type="checkbox" name="autoapply" checked> Apply to all selected files</label>
-                    <button class="classifier__submit">Submit</button>
+                    <button class="classifier__submit" value="value">Submit</button>
                 </form>
             </dialog>
         </div>

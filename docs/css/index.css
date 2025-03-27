@@ -173,6 +173,7 @@ main {
 }
 .back,
 [href="./upload"],
+.classifier__submit,
 .tags button {
     display: flex;
     cursor: pointer;
@@ -182,6 +183,7 @@ main {
     font-size: 16px;
 }
 .back,
+.classifier__submit,
 [href="./upload"] {
     display: inline-flex;
     border-radius: 8px;
@@ -327,7 +329,7 @@ details:open {
     width: calc(100% - 40px);
     height: 90vh;
     margin: auto;
-    label {
+    & > label {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -406,6 +408,9 @@ details:open {
                 background: rgba(1, 1, 1, .6) url(delete.svg) no-repeat center;
                 background-size: 20px;
             }
+            & + button {
+                display: none;
+            }
         }
     }
 }
@@ -421,6 +426,66 @@ details:open {
     background-position: 8px 3px;
     text-indent: 18px;
     margin-left: 6px;
+}
+.dialog__button--close {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-color: transparent;
+    background: transparent url(close.svg) no-repeat center;
+    background-size: 20px;
+    background-position: 8px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(255, 255, 255, .1)
+    }
+    &:focus {
+        outline: 0;
+        caret-color: transparent;
+    }
+}
+dialog {
+    color: white;
+    position: fixed;
+    display: block;
+    background: #131417;
+    border-radius: 12px;
+    border: 1px solid grey;
+    padding-right: 60px;
+    width: 300px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .2s, transform .2s;
+    &::backdrop {
+        background-color: rgba(255, 255, 255, .2);
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    label {
+        cursor: pointer;
+        line-height: 2.6ex;
+        text-indent: 16px;
+    }
+    .classifier__auto-apply {
+        text-indent: 0;
+        margin-block: 1ex 2ex;
+    }
+    &[open] {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+}
+.classifier__submit {
+    width: min-content;
+    &:before {
+        display: none;
+    }
 }
 @starting-style {
     .no-games {

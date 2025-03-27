@@ -1,5 +1,7 @@
 {
     "nes": "NES",
     "snes": "SNES",
-    "segaMD": "Sega Mega Drive"
+    "segaMD": "Sega Mega Drive",
+    "gba": "GBC/GBA",
+    "arcade": "MAME"
 }
