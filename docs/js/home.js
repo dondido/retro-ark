@@ -1,4 +1,69 @@
 const picker = document.getElementById('picker');
+const ANDROID_FILE_SELECTION_STORAGE_KEY = 'retroArk.android.selectedFiles';
+const ANDROID_FILE_SELECTION_EVENT = 'retroArk:android-files-selected';
+
+function normalizeAndroidFileReferences(files) {
+    return (Array.isArray(files) ? files : [])
+        .filter(Boolean)
+        .map((file) => {
+            if (typeof file === 'string') {
+                return {
+                    uri: file,
+                    name: file.split('/').pop() || file,
+                    mimeType: '',
+                    size: 0
+                };
+            }
+            if (file && typeof file === 'object') {
+                const uri = typeof file.uri === 'string' ? file.uri : (file.path || file.url || '');
+                if (!uri) return null;
+                return {
+                    uri,
+                    name: file.name || file.displayName || uri.split('/').pop() || 'selected-file',
+                    mimeType: file.mimeType || file.type || '',
+                    size: file.size || 0
+                };
+            }
+            return null;
+        })
+        .filter(Boolean);
+}
+
+function storeAndroidFileReferences(files) {
+    const normalizedFiles = normalizeAndroidFileReferences(files);
+    if (!normalizedFiles.length) return [];
+
+    try {
+        const existingFiles = JSON.parse(localStorage.getItem(ANDROID_FILE_SELECTION_STORAGE_KEY) || '[]');
+        const mergedFiles = [...(Array.isArray(existingFiles) ? existingFiles : []), ...normalizedFiles]
+            .filter((file, index, list) => list.findIndex(candidate => candidate.uri === file.uri) === index);
+        localStorage.setItem(ANDROID_FILE_SELECTION_STORAGE_KEY, JSON.stringify(mergedFiles));
+        window.__retroArkLastAndroidFileSelection = mergedFiles;
+        window.dispatchEvent(new CustomEvent(ANDROID_FILE_SELECTION_EVENT, { detail: { files: mergedFiles } }));
+        return mergedFiles;
+    } catch (error) {
+        console.warn('Unable to store Android file references', error);
+        return normalizedFiles;
+    }
+}
+
+/* async function pickRomFilesFromAndroidWrapper() {
+    if (typeof window.pickRomFiles === 'function') {
+        const files = await window.pickRomFiles();
+        return storeAndroidFileReferences(files);
+    }
+    return [];
+} */
+alert(1111);
+picker.addEventListener('click', async (event) => {
+    console.log(1111110)
+    if (typeof window.pickRomFiles === 'function') {
+        event.preventDefault();
+        const files = await window.pickRomFiles();
+        console.log(1111111, files)
+    }
+});
+
 const LevenshteinDistance =  function(a, b){
     if(a.length == 0) return b.length; 
     if(b.length == 0) return a.length; 
