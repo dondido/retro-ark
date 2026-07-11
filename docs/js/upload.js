@@ -1,5 +1,5 @@
 import { commitTransaction } from './db.js';
-import { romanToArabic, stripSpecialCharacters } from './utils.js';
+import { callWebview, romanToArabic, stripSpecialCharacters } from './utils.js';
 import systems from '../platforms/systems.json' with { type: 'json' };
 
 const picker = document.getElementById('picker');
@@ -140,13 +140,11 @@ function storeAndroidFileReferences(files) {
 }
 
 async function pickRomFilesFromAndroidWrapper() {
-    const files = await window.pickRomFiles();
-    console.log(1111112, JSON.stringify(files));
+    const files = await callWebview('pickRomFilesAsync')
+    console.log(11111122, JSON.stringify(files));
     return storeRoms({ target: { files } });
 }
 const isInWebview = /Android/i.test(navigator.userAgent);
-
-
 
 const supportedSystems = Object.keys(systems);
 loadScript('data/src/compression.js');
@@ -164,14 +162,16 @@ const matchPlatform = (ext) => {
         return ext
     }  
 }
+
 const storeRoms = async e => {
-    const nativeFiles = e.detail?.files || [];
+    /* const nativeFiles = e.detail?.files || [];
     if (nativeFiles.length) {
         $progress.textContent = `Stored ${nativeFiles.length} Android file reference${nativeFiles.length === 1 ? '' : 's'}.`;
         return;
-    }
+    } */
 
     const roms = Array.from(e.target.files || []);
+
     let completedCount = 0;
     let autoApplyPlatform;
     const step = () => {
@@ -193,8 +193,14 @@ const storeRoms = async e => {
             platform = matchPlatform(await new Promise(async resolve => {
                 const Compression = new EJS_COMPRESSION();
                 const cb = filename => resolve(filename.split('.').at(-1));
-                fileArrayBuffer = await readFile(rom);
-                Compression.decompress(new Uint8Array(fileArrayBuffer), () => {}, cb) 
+                if (isInWebview) {
+                    const base64 = await callWebview('getFileAsBase64Async', rom.uri);
+                    Compression.decompress(Uint8Array.fromBase64(base64), () => {}, cb);
+                }
+                else {
+                    fileArrayBuffer = await readFile(rom);
+                    Compression.decompress(new Uint8Array(fileArrayBuffer), () => {}, cb);
+                }
             }));
         }
         platform ||= autoApplyPlatform;
@@ -221,20 +227,19 @@ const storeRoms = async e => {
                 titles[platform]
             );
             const entry = bestMatchIndex === undefined ? { platform } : catalogues[platform][bestMatchIndex];
-            const buffer = fileArrayBuffer || await readFile(rom);
             entry.id ||= `${title.replace(/\s/g, '')}.${platform}`;
             entry.title = name;
             if ($tag.value) {
                 entry.tag = $tag.value;
             }
-            console.log(1111115, JSON.stringify(rom));
-            const { id, uri } = entry;
-            console.log(1111116, JSON.stringify(entry));
-            if (!uri) {
-                await commitTransaction('games', entry);
-            }
-            await commitTransaction('roms', { file: new Blob([buffer]), id, uri, platform, title });
+            const { uri } = rom;
+            const buffer = fileArrayBuffer || (!uri ? new Blob([await readFile(rom)]) : null);
+            await Promise.all([
+                commitTransaction('games', entry),
+                commitTransaction('roms', { file: buffer, id: entry.id, uri, platform, title }),
+            ]);
         }
+        
     }
     $progress.nextElementSibling.hidden = false;
 }

@@ -25,11 +25,10 @@ export const getCatalogue = () => {
 export const getGame = (id) => {
     const request = db.transaction('roms').objectStore('roms').get(id);
     const requestAll = db.transaction('roms').objectStore('roms').getAll();
-    requestAll.onsuccess = () => {
-        console.log(11117, requestAll.result);
-    }
+    requestAll.onsuccess = () => console.log(111155, id, JSON.stringify(requestAll.result));
     return new Promise((resolve) => {
-        request.onsuccess = () => resolve(request.result);
+        
+        request.onsuccess = () => {console.log(111156, id, JSON.stringify(request.result));resolve(request.result)};
     });
 };
 export const deleteByKey = (id) => {
