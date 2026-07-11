@@ -5,8 +5,6 @@ import systems from '../platforms/systems.json' with { type: 'json' };
 const picker = document.getElementById('picker');
 const catalogues = {};
 const titles = {};
-const ANDROID_FILE_SELECTION_STORAGE_KEY = 'retroArk.android.selectedFiles';
-const ANDROID_FILE_SELECTION_EVENT = 'retroArk:android-files-selected';
 
 function loadScript(src) {
     return new Promise(function (resolve) {
@@ -92,56 +90,9 @@ const findBestNameMatch = (mainString, targetStrings) => {
     if (rating > .6) return match;
     return {};
 };
-function normalizeAndroidFileReferences(files) {
-    return (Array.isArray(files) ? files : [])
-        .filter(Boolean)
-        .map((file) => {
-            if (typeof file === 'string') {
-                return {
-                    uri: file,
-                    name: file.split('/').pop() || file,
-                    mimeType: '',
-                    size: 0
-                };
-            }
-            if (file && typeof file === 'object') {
-                const uri = typeof file.uri === 'string' ? file.uri : (file.path || file.url || '');
-                if (!uri) return null;
-                return {
-                    uri,
-                    name: file.name || file.displayName || uri.split('/').pop() || 'selected-file',
-                    mimeType: file.mimeType || file.type || '',
-                    size: file.size || 0
-                };
-            }
-            return null;
-        })
-        .filter(Boolean);
-}
 
-function storeAndroidFileReferences(files) {
-    const normalizedFiles = normalizeAndroidFileReferences(files);
-    console.log(1111114, JSON.stringify(normalizedFiles[0]), normalizedFiles.length);
-
-    if (!normalizedFiles.length) return [];
-
-    try {
-        const existingFiles = JSON.parse(localStorage.getItem(ANDROID_FILE_SELECTION_STORAGE_KEY) || '[]');
-        const mergedFiles = [...(Array.isArray(existingFiles) ? existingFiles : []), ...normalizedFiles]
-            .filter((file, index, list) => list.findIndex(candidate => candidate.uri === file.uri) === index);
-        localStorage.setItem(ANDROID_FILE_SELECTION_STORAGE_KEY, JSON.stringify(mergedFiles));
-        window.__retroArkLastAndroidFileSelection = mergedFiles;
-        window.dispatchEvent(new CustomEvent(ANDROID_FILE_SELECTION_EVENT, { detail: { files: mergedFiles } }));
-        return mergedFiles;
-    } catch (error) {
-        console.warn('Unable to store Android file references', error);
-        return normalizedFiles;
-    }
-}
-
-async function pickRomFilesFromAndroidWrapper() {
-    const files = await callWebview('pickRomFilesAsync')
-    console.log(11111122, JSON.stringify(files));
+async function pickRomFilesFromWebview() {
+    const files = await callWebview('pickRomFilesAsync');
     return storeRoms({ target: { files } });
 }
 const isInWebview = /Android/i.test(navigator.userAgent);
@@ -164,14 +115,7 @@ const matchPlatform = (ext) => {
 }
 
 const storeRoms = async e => {
-    /* const nativeFiles = e.detail?.files || [];
-    if (nativeFiles.length) {
-        $progress.textContent = `Stored ${nativeFiles.length} Android file reference${nativeFiles.length === 1 ? '' : 's'}.`;
-        return;
-    } */
-
     const roms = Array.from(e.target.files || []);
-
     let completedCount = 0;
     let autoApplyPlatform;
     const step = () => {
@@ -243,5 +187,6 @@ const storeRoms = async e => {
     }
     $progress.nextElementSibling.hidden = false;
 }
-picker.addEventListener(...(isInWebview ? ['click', pickRomFilesFromAndroidWrapper] : ['change', storeRoms]));
-
+picker.addEventListener(
+    ...(isInWebview ? ['click', pickRomFilesFromWebview] : ['change', storeRoms])
+);
