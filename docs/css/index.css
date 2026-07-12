@@ -527,3 +527,16 @@ dialog {
         opacity: 1;
     }
 }
+
+.current-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #a0a0b0;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    min-height: 24px;
+}
+
+.current-title.fade-in {
+    animation: 0.4s ease-in-out both fade-in;
+}

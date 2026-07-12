@@ -8,5 +8,4 @@ window.webViewPromises = {};
 export const callWebview = (feature, param) => new Promise((resolve) => {
     window.webViewPromises[feature] = resolve;
     window.RomFileBridge[feature](param);
-    console.log(1111146, feature, param);
 });
