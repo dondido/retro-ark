@@ -112,21 +112,14 @@ const matchPlatform = (ext) => {
     if (['gba'].includes(ext)) {
         return ext
     }  
-}
+};
 
 const storeRoms = async e => {
+    const Compression = new EJS_COMPRESSION();
     const roms = Array.from(e.target.files || []);
     let completedCount = 0;
     let autoApplyPlatform;
-    const step = () => {
-        if (completedCount < roms.length) {
-            $progress.textContent = `Importing ${completedCount} of ${roms.length}.`;
-            return requestAnimationFrame(step);
-        }
-        $progress.textContent = `Imported ${completedCount} of ${roms.length}. Done!`;
-    };
     $progress.nextElementSibling.hidden = true;
-    requestAnimationFrame(step);
     for (const rom of roms) {
         const parts = rom.name.split('.');
         const ext = parts.pop();
@@ -141,18 +134,12 @@ const storeRoms = async e => {
         let platform = matchPlatform(ext);
         let fileArrayBuffer;
         if (platform === undefined && ['7z', 'zip', 'rar'].includes(ext)) {
-            platform = matchPlatform(await new Promise(async resolve => {
-                const Compression = new EJS_COMPRESSION();
-                const cb = filename => resolve(filename.split('.').at(-1));
-                if (isInWebview) {
-                    const base64 = await callWebview('getFileAsBase64Async', rom.uri);
-                    Compression.decompress(Uint8Array.fromBase64(base64), () => {}, cb);                   Compression.decompress(Uint8Array.fromBase64(base64), () => {}, cb);
-                }
-                else {
-                    fileArrayBuffer = await readFile(rom);
-                    Compression.decompress(new Uint8Array(fileArrayBuffer), () => {}, cb);
-                }
-            }));
+            const compressedData = isInWebview
+                ? Uint8Array.fromBase64(await callWebview('getFileAsBase64Async', rom.uri))
+                : new Uint8Array(await readFile(rom));
+            const updateMsg = percentage => $currentTitle.dataset.percentage = percentage;
+            const files = await Compression.decompress(compressedData, updateMsg);
+            platform = matchPlatform(Object.keys(files)[0].split('.').at(-1));
         }
         platform ||= autoApplyPlatform;
         if (platform === undefined) {
@@ -166,6 +153,9 @@ const storeRoms = async e => {
             }  
         }
         completedCount ++;
+        $progress.textContent = completedCount < roms.length
+            ? `Importing ${completedCount} of ${roms.length}.`
+            : `Imported ${completedCount} of ${roms.length}. Done!`;
         if (supportedSystems.includes(platform)) {
             if (platform in catalogues === false) {
                 const json = await (await fetch(`platforms/${platform}.json`)).json();
@@ -185,10 +175,8 @@ const storeRoms = async e => {
             }
             const { uri } = rom;
             const buffer = fileArrayBuffer || (!uri ? new Blob([await readFile(rom)]) : null);
-            await Promise.all([
-                commitTransaction('games', entry),
-                commitTransaction('roms', { file: buffer, id: entry.id, uri, platform, title }),
-            ]);
+            await commitTransaction('games', entry);
+            await commitTransaction('roms', { file: buffer, id: entry.id, uri, platform, title });
         }
         
     }

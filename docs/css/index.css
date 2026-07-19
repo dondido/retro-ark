@@ -535,6 +535,20 @@ dialog {
     margin-top: 12px;
     margin-bottom: 8px;
     min-height: 24px;
+    position: relative;
+    padding-right: 3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    &:after {
+        content: attr(data-percentage);
+        position: absolute;
+        text-align: right;
+        width: 100%;
+        left: 0;
+    }
 }
 
 .current-title.fade-in {

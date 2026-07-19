@@ -104,8 +104,8 @@
     "Press Keyboard": "Presionar Teclado",
     "INSERT COIN": "INSERTE MONEDA",
     "Remove": "Eliminar",
-    "SAVE LOADED FROM BROWSER": "GUARDAR CARGADO DESDE EL NAVEGADOR",
-    "SAVE SAVED TO BROWSER": "GUARDAR GUARDADO EN EL NAVEGADOR",
+    "LOADED STATE FROM BROWSER": "ESTADO CARGADO DESDE EL NAVEGADOR",
+    "SAVED STATE TO BROWSER": "ESTADO GUARDADO EN EL NAVEGADOR",
     "Join the discord": "Únete al Discord",
     "View on GitHub": "Ver en GitHub",
     "Failed to start game": "Error al iniciar el juego",
@@ -121,8 +121,8 @@
     "EmulatorJS": "EmulatorJS",
     "Clear All": "Limpiar todo",
     "Take Screenshot": "Tomar Captura de Pantalla",
-    "Start screen recording": "Iniciar grabación de pantalla",
-    "Stop screen recording": "Detener grabación de pantalla",
+    "Start Screen Recording": "Iniciar grabación de pantalla",
+    "Stop Screen Recording": "Detener grabación de pantalla",
     "Quick Save": "Guardado Rápido",
     "Quick Load": "Carga Rápida",
     "REWIND": "REBOBINAR",
@@ -306,5 +306,6 @@
     "DPAD_UP": "DPAD ARRIBA",
     "DPAD_DOWN": "DPAD_ABAJO",
     "DPAD_LEFT": "DPAD_IZQUIERDA",
-    "DPAD_RIGHT": "DPAD_DERECHO"
+    "DPAD_RIGHT": "DPAD_DERECHO",
+    "Autofire": "Autofire"
 }

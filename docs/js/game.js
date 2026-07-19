@@ -21,7 +21,7 @@ window.EJS_gameUrl = new File([byteArray || file], title);
 window.EJS_core = platform;
 window.EJS_pathtodata = 'data/';
 window.EJS_startOnLoaded = true;
-window.EJS_DEBUG_XX = enableDebug;
+//window.EJS_DEBUG_XX = enableDebug;
 window.EJS_disableDatabases = true;
 window.EJS_threads = enableThreads;
 
