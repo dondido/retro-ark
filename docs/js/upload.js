@@ -140,6 +140,7 @@ const storeRoms = async e => {
             const updateMsg = percentage => $currentTitle.dataset.percentage = percentage;
             const files = await Compression.decompress(compressedData, updateMsg);
             platform = matchPlatform(Object.keys(files)[0].split('.').at(-1));
+            updateMsg('100%');
         }
         platform ||= autoApplyPlatform;
         if (platform === undefined) {
@@ -175,10 +176,11 @@ const storeRoms = async e => {
             }
             const { uri } = rom;
             const buffer = fileArrayBuffer || (!uri ? new Blob([await readFile(rom)]) : null);
-            await commitTransaction('games', entry);
-            await commitTransaction('roms', { file: buffer, id: entry.id, uri, platform, title });
+            await Promise.all([
+                commitTransaction('games', entry),
+                commitTransaction('roms', { file: buffer, id: entry.id, uri, platform, title }),
+            ]);
         }
-        
     }
     $progress.nextElementSibling.hidden = false;
 }
