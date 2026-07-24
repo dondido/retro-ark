@@ -8,6 +8,9 @@ await new Promise((resolve) => {
     request.onsuccess = resolve;
 });
 const db = request.result;
+const resolveDbRequest = (request) => new Promise((resolve) => {
+    request.onsuccess = () => resolve(request.result);
+});
 export const commitTransaction = (ref, data) => {
     return new Promise((resolve) => {
         const transaction = db.transaction(ref, 'readwrite');
@@ -17,28 +20,17 @@ export const commitTransaction = (ref, data) => {
     });
 };
 export const getCatalogue = () => {
-    const request = db.transaction('games').objectStore('games').getAll();
-    return new Promise((resolve) => {
-        request.onsuccess = () => resolve(request.result);
-    });
+    const request = db.transaction('games', 'readonly').objectStore('games').getAll();
+    return resolveDbRequest(request);
 };
 export const getGame = (id) => {
-    const request = db.transaction('roms').objectStore('roms').get(id);
-    return new Promise((resolve) => {
-        request.onsuccess = () => resolve(request.result);
-    });
+    const request = db.transaction('roms', 'readonly').objectStore('roms').get(id);
+    return resolveDbRequest(request);
 };
 export const deleteByKey = (id) => {
     const romsRequest = db.transaction('roms', 'readwrite').objectStore('roms').delete(id);
     const gamesRequest = db.transaction('games', 'readwrite').objectStore('games').delete(id);
-    return Promise.all([
-        new Promise((resolve) => {
-            romsRequest.onsuccess = () => resolve(romsRequest.result);
-        }),
-        new Promise((resolve) => {
-            gamesRequest.onsuccess = () => resolve(gamesRequest.result);
-        })
-    ]);
+    return Promise.all([resolveDbRequest(romsRequest), resolveDbRequest(gamesRequest)]);
 };
 export const deleteBulk = (bulk) => {
     const deleteBulkByStore = (ref) => {
