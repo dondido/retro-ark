@@ -146,6 +146,7 @@ const init = () => {
     $pagination.innerHTML = makePagination(lastPage);
     $tags.querySelector('[href$=favourites]').textContent = `Favourites (${favourites.length})`;
 };
+console.log('Service Worker: Registering sw.js', location);
 navigator.serviceWorker.register('../sw.js');
 addEventListener('resize', collapseTags)
 $order.onchange = ({ target }) => {
