@@ -8,7 +8,7 @@ const PRECACHE_ROUTES = [
 
 async function precache() {
   const cache = await caches.open(CACHE_NAME);
-  const entries = [...PRECACHE_ROUTES];
+  const entries =PRECACHE_ROUTES;
   for (const item of entries) {
     try {
       const res = await fetch(item);
