@@ -147,7 +147,7 @@ const init = () => {
     $tags.querySelector('[href$=favourites]').textContent = `Favourites (${favourites.length})`;
 };
 console.log('Service Worker: Registering sw.js', location);
-navigator.serviceWorker.register('../sw.js');
+navigator.serviceWorker.register(location.pathname === '/' ? '../sw.js' : 'sw.js');
 addEventListener('resize', collapseTags)
 $order.onchange = ({ target }) => {
     location.href = `?${new URLSearchParams({ tag, order: target.value})}`;
